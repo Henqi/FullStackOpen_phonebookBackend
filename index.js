@@ -21,9 +21,22 @@ let persons = [
           {
             "name": "Mary Poppendieck",
             "number": "39-23-6423122",
-              "name": "Henri Poppendieck",
-            "number": "00-23-6423122",
             "id": 4
+          },
+          {
+            "name": "Mary Poppendieck",
+            "number": "39-23-6423122",
+            "id": 5         
+          },
+          {
+            "name": "Ketale Poppendieck",
+            "number": "39-23-6423122",
+            "id": 6
+          },
+          {
+            "name": "Karri Poppendieck",
+            "number": "39-23-6423122",
+            "id": 7
           }
 ]
 
@@ -38,11 +51,30 @@ app.get('/api/persons/:id', (req, res) => {
     })
 
     if (!personData) {
-        res.status(400).end
+        res.status(404).end
     }
-       
+
     res.json(personData)
   })
+
+  app.delete('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    
+    if (persons.filter(person => person.id === id).length === 0) {
+        console.log('There were no matching person ids')
+        res.status(404).end()
+    } 
+    else {
+        persons = persons.filter(person => {
+            person.id !== id
+      })
+      res.status(204).end()
+    }
+})
+
+app.get('/api/persons', (req, res) => {
+    res.json(persons)
+})
 
 app.get('/info', (req, res) => {
     const contactAmount = persons.length
