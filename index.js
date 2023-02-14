@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const PORT = 3001
 
 let persons = [
     {
@@ -23,6 +24,11 @@ let persons = [
             "name": "Mary Poppendieck",
             "number": "39-23-6423122",
             "id": 4
+          },
+          {
+            "name": "Henri Poppendieck",
+            "number": "00-23-6423122",
+            "id": 5
           }
         ]
     }
@@ -32,7 +38,15 @@ app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
 
-const PORT = 3001
+app.get('/info', (req, res) => {
+    const contactAmount = persons[0].persons.length
+    const date = new Date();
+
+    console.log(contactAmount)
+    console.log(date)
+    res.send(`Phonebook has contact details of ${contactAmount} persons <br> ${date}`)
+})
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
