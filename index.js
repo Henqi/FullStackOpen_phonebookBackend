@@ -3,8 +3,6 @@ const app = express()
 const PORT = 3001
 
 let persons = [
-    {
-        "persons": [
           {
             "name": "Arto Hellas",
             "number": "040-123456",
@@ -23,23 +21,31 @@ let persons = [
           {
             "name": "Mary Poppendieck",
             "number": "39-23-6423122",
-            "id": 4
-          },
-          {
-            "name": "Henri Poppendieck",
+              "name": "Henri Poppendieck",
             "number": "00-23-6423122",
-            "id": 5
+            "id": 4
           }
-        ]
-    }
 ]
 
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
 
+app.get('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const personData = persons.find(person => {
+        return person.id === id
+    })
+
+    if (!personData) {
+        res.status(400).end
+    }
+       
+    res.json(personData)
+  })
+
 app.get('/info', (req, res) => {
-    const contactAmount = persons[0].persons.length
+    const contactAmount = persons.length
     const date = new Date();
 
     res.send(`Phonebook has contact details of ${contactAmount} persons <br> ${date}`)
