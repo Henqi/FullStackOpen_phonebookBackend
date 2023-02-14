@@ -42,8 +42,6 @@ app.get('/info', (req, res) => {
     const contactAmount = persons[0].persons.length
     const date = new Date();
 
-    console.log(contactAmount)
-    console.log(date)
     res.send(`Phonebook has contact details of ${contactAmount} persons <br> ${date}`)
 })
 
