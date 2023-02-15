@@ -48,20 +48,31 @@ app.get('/api/persons', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
     let addedPerson = req.body
+    console.log(addedPerson.kala)
+    if (!addedPerson.id || !addedPerson.name) {
+      const error = {error:'name & number are both required'}
+      res.status(400).json(error).end()
+    }
+  
+    if (persons.filter(person => person.name === addedPerson.name)) {
+      const error = {error:'the person already exists in contacts'}
+      res.status(400).json(error).end()
+    }
+
     addedPerson['id'] = Math.floor(Math.random() * 99999);
-    console.log('Added person: ', addedPerson, typeof(addedPerson))
+    console.log('Added person: ', addedPerson)
     persons = [...persons].concat(addedPerson)
     res.json(persons)
 })
 
 app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
-    const personData = persons.find(person => {
-        return person.id === id
-    })
-
+    const personData = persons.find(person =>
+       person.id === id
+    )
+    
     if (!personData) {
-        res.status(404).end
+        res.status(404).end()
     }
 
     res.json(personData)
@@ -76,9 +87,7 @@ app.get('/api/persons/:id', (req, res) => {
     } 
     else {
       console.log('persons before delete: ', persons)
-      const selectedPerson = persons.find(person => person.id === id)
-      const personIndex = persons.indexOf(selectedPerson)
-      persons.splice(personIndex, 1)
+      persons = persons.filter(person => person.id !== id)
       console.log('persons after delete: ', persons)
       res.status(204).end()
     }
@@ -91,7 +100,6 @@ app.get('/api/persons', (req, res) => {
 app.get('/info', (req, res) => {
     const contactAmount = persons.length
     const date = new Date();
-
     res.send(`Phonebook has contact details of ${contactAmount} persons <br> ${date}`)
 })
 
