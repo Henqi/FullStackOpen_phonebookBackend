@@ -1,13 +1,14 @@
 const express = require('express')
 const morgan = require('morgan')
-const app = express()
+const cors = require('cors')
 
-const PORT = 3001
+const app = express()
 
 morgan.token('bodyJSON', req => JSON.stringify(req.body || {}));
 
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :bodyJSON'))
+app.use(cors())
 
 let persons = [
           {
@@ -65,9 +66,9 @@ app.post('/api/persons', (req, res) => {
     }
 
     else {
-      addedPerson['id'] = Math.floor(Math.random() * 99999);
+      addedPerson['id'] = Math.floor(Math.random() * 99999)
       persons = [...persons].concat(addedPerson)
-      res.json(persons)
+      res.json(addedPerson)
     }
 })
 
@@ -106,6 +107,8 @@ app.get('/info', (req, res) => {
     const date = new Date();
     res.send(`Phonebook has contact details of ${contactAmount} persons <br> ${date}`)
 })
+
+const PORT = process.env.PORT || 3001
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
