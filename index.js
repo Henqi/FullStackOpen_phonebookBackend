@@ -67,7 +67,7 @@ app.post('/api/persons', (req, res) => {
     }
 
     else {
-      addedPerson['id'] = Math.floor(Math.random() * 99999)
+      addedPerson['id'] = Math.floor(Math.random() * 99999999)
       persons = [...persons].concat(addedPerson)
       res.json(addedPerson)
     }
