@@ -26,7 +26,7 @@ let persons = [
             "id": 4
           },
           {
-            "name": "Mary Poppendieck",
+            "name": "Mary Poppendieckjjj",
             "number": "39-23-6423122",
             "id": 5         
           },
@@ -49,20 +49,24 @@ app.get('/api/persons', (req, res) => {
 app.post('/api/persons', (req, res) => {
     let addedPerson = req.body
 
-    if (!addedPerson.id || !addedPerson.name) {
-      const error = {error:'name & number are both required'}
-      res.status(400).json(error).end()
+    if (!addedPerson.name || !addedPerson.number) {
+      console.log('name or number missing')
+      const errorDataMissing = {error:'name & number are both required'}
+      res.status(400).json(errorDataMissing).end()
     }
   
-    if (persons.filter(person => person.name === addedPerson.name)) {
-      const error = {error:'the person already exists in contacts'}
-      res.status(400).json(error).end()
+    else if (persons.filter(person => person.name === addedPerson.name).length !== 0) {
+      console.log('person already exists')
+      const errorExists = {error:`the person ${addedPerson.name} already exists in contacts`}
+      res.status(400).json(errorExists).end()
     }
 
-    addedPerson['id'] = Math.floor(Math.random() * 99999);
-    console.log('Added person: ', addedPerson)
-    persons = [...persons].concat(addedPerson)
-    res.json(persons)
+    else {
+      addedPerson['id'] = Math.floor(Math.random() * 99999);
+      console.log('Added person: ', addedPerson)
+      persons = [...persons].concat(addedPerson)
+      res.json(persons)
+    }
 })
 
 app.get('/api/persons/:id', (req, res) => {
