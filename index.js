@@ -48,7 +48,7 @@ app.get('/api/persons', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
     let addedPerson = req.body
-    console.log(addedPerson.kala)
+
     if (!addedPerson.id || !addedPerson.name) {
       const error = {error:'name & number are both required'}
       res.status(400).json(error).end()
