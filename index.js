@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const PORT = 3001
 
+app.use(express.json())
+
 let persons = [
           {
             "name": "Arto Hellas",
@@ -44,6 +46,14 @@ app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
 
+app.post('/api/persons', (req, res) => {
+    let addedPerson = req.body
+    addedPerson['id'] = Math.floor(Math.random() * 99999);
+    console.log('Added person: ', addedPerson, typeof(addedPerson))
+    persons = [...persons].concat(addedPerson)
+    res.json(persons)
+})
+
 app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     const personData = persons.find(person => {
@@ -59,15 +69,17 @@ app.get('/api/persons/:id', (req, res) => {
 
   app.delete('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
-    
+
     if (persons.filter(person => person.id === id).length === 0) {
-        console.log('There were no matching person ids')
-        res.status(404).end()
+      console.log('There were no matching person ids')
+      res.status(404).end()
     } 
     else {
-        persons = persons.filter(person => {
-            person.id !== id
-      })
+      console.log('persons before delete: ', persons)
+      const selectedPerson = persons.find(person => person.id === id)
+      const personIndex = persons.indexOf(selectedPerson)
+      persons.splice(personIndex, 1)
+      console.log('persons after delete: ', persons)
       res.status(204).end()
     }
 })
