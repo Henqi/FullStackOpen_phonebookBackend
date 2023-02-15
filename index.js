@@ -1,8 +1,13 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
+
 const PORT = 3001
 
+morgan.token('bodyJSON', req => JSON.stringify(req.body || {}));
+
 app.use(express.json())
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :bodyJSON'))
 
 let persons = [
           {
@@ -50,20 +55,17 @@ app.post('/api/persons', (req, res) => {
     let addedPerson = req.body
 
     if (!addedPerson.name || !addedPerson.number) {
-      console.log('name or number missing')
       const errorDataMissing = {error:'name & number are both required'}
       res.status(400).json(errorDataMissing).end()
     }
   
     else if (persons.filter(person => person.name === addedPerson.name).length !== 0) {
-      console.log('person already exists')
       const errorExists = {error:`the person ${addedPerson.name} already exists in contacts`}
       res.status(400).json(errorExists).end()
     }
 
     else {
       addedPerson['id'] = Math.floor(Math.random() * 99999);
-      console.log('Added person: ', addedPerson)
       persons = [...persons].concat(addedPerson)
       res.json(persons)
     }
@@ -86,13 +88,11 @@ app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
 
     if (persons.filter(person => person.id === id).length === 0) {
-      console.log('There were no matching person ids')
-      res.status(404).end()
+      const errorNoMatch = {error:'no matching person ids'}
+      res.status(404).json(errorNoMatch).end()
     } 
     else {
-      console.log('persons before delete: ', persons)
       persons = persons.filter(person => person.id !== id)
-      console.log('persons after delete: ', persons)
       res.status(204).end()
     }
 })
