@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const password = process.argv[2]
-const url = `mongodb+srv://fullstackopen:${password}@cluster0.ckhr1zl.mongodb.net/?retryWrites=true&w=majority`
+const url = `mongodb+srv://fullstackopen:${password}@cluster0.ckhr1zl.mongodb.net/phonebookApp?retryWrites=true&w=majority`
 
 if (process.argv.length < 3) {
     console.log('Provide a password argument for db connection!')
