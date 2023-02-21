@@ -1,4 +1,5 @@
 require('dotenv').config()
+const mongoose = require('mongoose')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -17,27 +18,28 @@ app.use(express.static('build'))
 app.get('/api/persons', (req, res) => {
   Person.find({}).then(persons => {
     res.json(persons)
-    mongoose.connection.close()
   })
 })
 
 app.post('/api/persons', (req, res) => {
-    let addedPerson = req.body
+    const addedPerson = req.body
 
     if (!addedPerson.name || !addedPerson.number) {
       const errorDataMissing = {error:'name & number are both required'}
       res.status(400).json(errorDataMissing).end()
     }
   
-    else if (persons.filter(person => person.name === addedPerson.name).length !== 0) {
+    else if (Person.find({ name: addedPerson.name }).length !== 0) {
       const errorExists = {error:`the person ${addedPerson.name} already exists in contacts`}
       res.status(400).json(errorExists).end()
-    }
+    } 
 
     else {
-      addedPerson['id'] = Math.floor(Math.random() * 99999999)
-      persons = [...persons].concat(addedPerson)
-      res.json(addedPerson)
+      addedPerson.save()
+                 .then(savedPerson => {
+                    res.json(savedPerson)
+                 })
+      
     }
 })
 
@@ -55,7 +57,6 @@ app.get('/api/persons/:id', (req, res) => {
         .catch(error => {
           res.status(400).json(error).end()
         })
-    mongoose.connection.close()
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -72,9 +73,11 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-    const contactAmount = persons.length
-    const date = new Date();
-    res.send(`Phonebook has contact details of ${contactAmount} persons <br> ${date}`)
+  const date = new Date();
+  Person.find({})
+        .then(personData => {
+          res.send(`Phonebook has contact details of ${personData.length} persons <br> ${date}`)
+        })
 })
 
 const PORT = process.env.PORT
