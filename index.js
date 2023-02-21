@@ -1,5 +1,4 @@
 require('dotenv').config()
-const mongoose = require('mongoose')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -22,24 +21,20 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-    const addedPerson = req.body
+  const newPerson = new Person({
+    name: req.body.name,
+    number: req.body.number
+  })
 
-    if (!addedPerson.name || !addedPerson.number) {
+    if (!newPerson.name || !newPerson.number) {
       const errorDataMissing = {error:'name & number are both required'}
       res.status(400).json(errorDataMissing).end()
     }
-  
-    else if (Person.find({ name: addedPerson.name }).length !== 0) {
-      const errorExists = {error:`the person ${addedPerson.name} already exists in contacts`}
-      res.status(400).json(errorExists).end()
-    } 
-
     else {
-      addedPerson.save()
-                 .then(savedPerson => {
-                    res.json(savedPerson)
+      newPerson.save()
+                .then(person => {
+                  res.json(person)
                  })
-      
     }
 })
 
