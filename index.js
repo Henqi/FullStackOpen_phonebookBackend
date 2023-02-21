@@ -4,7 +4,6 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/persons')
 
-
 const app = express()
 
 morgan.token('bodyJSON', req => JSON.stringify(req.body || {}));
@@ -13,7 +12,6 @@ app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :bodyJSON'))
 app.use(cors())
 app.use(express.static('build'))
-
 
 
 app.get('/api/persons', (req, res) => {
@@ -71,10 +69,6 @@ app.delete('/api/persons/:id', (req, res) => {
     persons = persons.filter(person => person.id !== id)
     res.status(204).end()
     }
-})
-
-app.get('/api/persons', (req, res) => {
-    res.json(persons)
 })
 
 app.get('/info', (req, res) => {
