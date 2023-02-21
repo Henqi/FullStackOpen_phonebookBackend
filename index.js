@@ -27,16 +27,15 @@ app.post('/api/persons', (req, res) => {
     number: req.body.number
   })
 
-    if (!newPerson.name || !newPerson.number) {
-      const errorDataMissing = {error:'name & number are both required'}
-      res.status(400).json(errorDataMissing).end()
-    }
-    else {
-      newPerson.save()
-                .then(person => {
-                  res.json(person)
-                 })
-    }
+  if (!newPerson.name || !newPerson.number) {
+    res.status(400).json({error:'name & number are both required'}).end()
+  }
+  else {
+    newPerson.save()
+              .then(person => {
+                res.json(person)
+              })
+  }
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -60,7 +59,31 @@ app.delete('/api/persons/:id', (req, res, next)  => {
             res.status(404).json({'error':'no matching person ids'}).end()
           }
           else {
-          console.log(`deleted ${deletedPerson} from database`)
+            console.log(`deleted ${deletedPerson} from database`)
+            res.status(204).end()
+          }
+        })
+        .catch(error => next(error))
+})
+
+app.put('/api/persons/:id', (req, res, next) => {
+  const searchId = req.params.id
+  const newPerson = new Person({
+    name: req.body.name,
+    number: req.body.number
+  })
+
+  if (!newPerson.name || !newPerson.number) {
+    res.status(400).json({error:'name & number are both required'}).end()
+  }
+
+  Person.findByIdAndUpdate(searchId, {number:newPerson.number})
+        .then(data => {
+          if (data.length === 0) {
+            res.status(404).end()
+          }
+          else {
+            console.log(`updated ${newPerson.name} number to ${newPerson.number}`)
           res.status(204).end()
           }
         })
