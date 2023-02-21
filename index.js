@@ -3,6 +3,7 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/persons')
+const { response } = require('express')
 
 const app = express()
 
@@ -55,16 +56,20 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-
-  if (persons.filter(person => person.id === id).length === 0) {
-    const errorNoMatch = {error:'no matching person ids'}
-    res.status(404).json(errorNoMatch).end()
-  } 
-  else {
-    persons = persons.filter(person => person.id !== id)
-    res.status(204).end()
-    }
+  Person.findByIdAndDelete(req.params.id)
+        .then(deletedPerson => {
+          if (!deletedPerson) {
+            res.status(404).json({'error':'no matching person ids'}).end()
+          }
+          else {
+          console.log(`deleted ${deletedPerson} from database`)
+          res.status(204).end()
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          response.status(400).send({error: 'malformed id'})
+        })
 })
 
 app.get('/info', (req, res) => {
