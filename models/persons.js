@@ -20,7 +20,8 @@ const phonebookSchema = new mongoose.Schema({
     },
     number: {
         type: String,
-        required: true
+        required: true,
+        match: /^\d{2}-\d{6,11}$|^\d{3}-\d{5,10}$/g
     }
 })
 

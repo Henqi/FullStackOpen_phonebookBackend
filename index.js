@@ -74,7 +74,7 @@ app.put('/api/persons/:id', (req, res, next) => {
     res.status(400).json({error:'name & number are both required'}).end()
   }
 
-  Person.findByIdAndUpdate(searchId, {number:newPerson.number})
+  Person.findByIdAndUpdate(searchId, {number:newPerson.number}, {runValidators: true, context: 'query'})
         .then(data => {
           if (data.length === 0) {
             res.status(404).end()
