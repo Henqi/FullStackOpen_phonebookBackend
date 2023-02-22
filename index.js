@@ -3,7 +3,6 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/persons')
-const { response } = require('express')
 
 const app = express()
 
@@ -28,39 +27,39 @@ app.post('/api/persons', (req, res, next) => {
   })
 
   newPerson.save()
-            .then(person => {
-              res.json(person)
-            })
-            .catch(error => next(error))
+    .then(person => {
+      res.json(person)
+    })
+    .catch(error => next(error))
 
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
   const searchId = req.params.id
   Person.findById(searchId)
-        .then(data => {
-          if (!data) {
-            res.status(404).end()
-          }
-          else {
-            res.json(data)
-          }
-        })
-        .catch(error => next(error))
+    .then(data => {
+      if (!data) {
+        res.status(404).end()
+      }
+      else {
+        res.json(data)
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next)  => {
   Person.findByIdAndDelete(req.params.id)
-        .then(deletedPerson => {
-          if (!deletedPerson) {
-            res.status(404).json({'error':'no matching person ids'}).end()
-          }
-          else {
-            console.log(`deleted ${deletedPerson} from database`)
-            res.status(204).end()
-          }
-        })
-        .catch(error => next(error))
+    .then(deletedPerson => {
+      if (!deletedPerson) {
+        res.status(404).json({ 'error':'no matching person ids' }).end()
+      }
+      else {
+        console.log(`deleted ${deletedPerson} from database`)
+        res.status(204).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -71,28 +70,28 @@ app.put('/api/persons/:id', (req, res, next) => {
   })
 
   if (!newPerson.name || !newPerson.number) {
-    res.status(400).json({error:'name & number are both required'}).end()
+    res.status(400).json({ error:'name & number are both required' }).end()
   }
 
-  Person.findByIdAndUpdate(searchId, {number:newPerson.number}, {runValidators: true, context: 'query'})
-        .then(data => {
-          if (data.length === 0) {
-            res.status(404).end()
-          }
-          else {
-            console.log(`updated ${newPerson.name} number to ${newPerson.number}`)
-          res.status(204).end()
-          }
-        })
-        .catch(error => next(error))
+  Person.findByIdAndUpdate(searchId, { number:newPerson.number }, { runValidators: true, context: 'query' })
+    .then(data => {
+      if (data.length === 0) {
+        res.status(404).end()
+      }
+      else {
+        console.log(`updated ${newPerson.name} number to ${newPerson.number}`)
+        res.status(204).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.get('/info', (req, res) => {
   const date = new Date();
   Person.find({})
-        .then(personData => {
-          res.send(`Phonebook has contact details of ${personData.length} persons <br> ${date}`)
-        })
+    .then(personData => {
+      res.send(`Phonebook has contact details of ${personData.length} persons <br> ${date}`)
+    })
 })
 
 const unknownEndpoint = (request, response) => {
